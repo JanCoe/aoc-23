@@ -14,24 +14,12 @@ fn calc_total(content: &str) -> u32 {
     total
 }
 fn find_digit(line: &str, reverse: bool) -> u32 {
-    let mut digit = 0;
-
+    let mut iter = line.chars().filter(|c| c.is_digit(10)).map(|c| c.to_digit(10));
     if reverse {
-        for c in line.chars().rev() {
-            if c.is_digit(10) {
-                digit = c.to_digit(10).unwrap();
-                break;
-            }
-        }
+        iter.last().unwrap().unwrap()
     } else {
-        for c in line.chars() {
-            if c.is_digit(10) {
-                digit = c.to_digit(10).unwrap();
-                break;
-            }
-        }
+        iter.next().unwrap().unwrap()
     }
-    digit
 }
 
 #[cfg(test)]

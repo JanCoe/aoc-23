@@ -21,9 +21,21 @@ fn power_of_game(line: &str) -> u32 {
 
             let number: u32 = go[0].parse().unwrap();
             match go[1] {
-                "blue" => if number > blue { blue = number},
-                "red" => if number > red { red = number},
-                "green" => if number > green { green = number},
+                "blue" => {
+                    if number > blue {
+                        blue = number
+                    }
+                }
+                "red" => {
+                    if number > red {
+                        red = number
+                    }
+                }
+                "green" => {
+                    if number > green {
+                        green = number
+                    }
+                }
                 _ => panic!("wrong colour"),
             }
         }
@@ -33,7 +45,7 @@ fn power_of_game(line: &str) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use super::{power_of_game};
+    use super::power_of_game;
 
     #[test]
     fn test_power_of_game() {

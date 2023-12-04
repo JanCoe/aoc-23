@@ -7,11 +7,15 @@ fn main() {
 fn calc_total(content: &str) -> u32 {
     let mut total = 0;
     for line in content.lines() {
-        let words = vec!["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
-        let words_backwards = vec!["eno", "owt", "eerht", "ruof", "evif", "xis", "neves", "thgie", "enin"];
+        let words = vec![
+            "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+        ];
+        let words_backwards = vec![
+            "eno", "owt", "eerht", "ruof", "evif", "xis", "neves", "thgie", "enin",
+        ];
         let first = find_first(line, &words);
         let last = find_last(line, &words_backwards);
-        total += first*10 + last;
+        total += first * 10 + last;
     }
     total
 }
@@ -53,11 +57,13 @@ fn find_last(line: &str, words_backwards: &Vec<&str>) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use super::{find_first, find_last, calc_total};
+    use super::{calc_total, find_first, find_last};
 
     #[test]
     fn test_find_first() {
-        let words = vec!["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+        let words = vec![
+            "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+        ];
 
         assert_eq!(find_first("two1nine", &words), 2);
         assert_eq!(find_first("eighttwothree", &words), 8);
@@ -70,7 +76,9 @@ mod tests {
 
     #[test]
     fn test_find_last() {
-        let words = vec!["eno", "owt", "eerht", "ruof", "evif", "xis", "neves", "thgie", "enin"];
+        let words = vec![
+            "eno", "owt", "eerht", "ruof", "evif", "xis", "neves", "thgie", "enin",
+        ];
         assert_eq!(find_last("two1nine", &words), 9);
         assert_eq!(find_last("eighttwothree", &words), 3);
         assert_eq!(find_last("abcone2threexyz", &words), 3);
@@ -78,7 +86,10 @@ mod tests {
         assert_eq!(find_last("4nineeightseven2", &words), 2);
         assert_eq!(find_last("zoneight234", &words), 4);
         assert_eq!(find_last("7pqrstsixteen", &words), 6);
-        assert_eq!(find_last("sxbjdbtlnjrmlzgxneightthreepmqxdxhfk8jfrheightwovp", &words), 2);
+        assert_eq!(
+            find_last("sxbjdbtlnjrmlzgxneightthreepmqxdxhfk8jfrheightwovp", &words),
+            2
+        );
         assert_eq!(find_last("sevenonezknqnkfqbzffjvfivetwo94two", &words), 2);
     }
 

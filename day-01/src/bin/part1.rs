@@ -9,12 +9,15 @@ fn calc_total(content: &str) -> u32 {
     for line in content.lines() {
         let first = find_digit(line, false);
         let last = find_digit(line, true);
-        total += first*10 + last;
+        total += first * 10 + last;
     }
     total
 }
 fn find_digit(line: &str, reverse: bool) -> u32 {
-    let mut iter = line.chars().filter(|c| c.is_digit(10)).map(|c| c.to_digit(10));
+    let mut iter = line
+        .chars()
+        .filter(|c| c.is_digit(10))
+        .map(|c| c.to_digit(10));
     if reverse {
         iter.last().unwrap().unwrap()
     } else {
@@ -24,7 +27,7 @@ fn find_digit(line: &str, reverse: bool) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use super::{find_digit, calc_total};
+    use super::{calc_total, find_digit};
 
     #[test]
     fn test_find_digit() {

@@ -1,112 +1,68 @@
 use std::collections::HashSet;
-use std::iter::once;
 
 #[derive(Debug)]
 struct Map {
-    from: u32,
-    to: u32,
-    delta: i32,
+    from: u64,
+    to: u64,
+    delta: i64,
 }
 
 impl Map {
-    fn new(data: Vec<u32>) -> Self {
-        Self { from: data[1], to: data[1] + data[2] - 1, delta: data[0] as i32 - data[1] as i32 }
+    fn new(data: Vec<u64>) -> Self {
+        Self {
+            from: data[1],
+            to: data[1] + data[2] - 1,
+            delta: data[0] as i64 - data[1] as i64,
+        }
     }
 }
 
+fn parse_maps(data: &str) -> Vec<Map> {
+    data.lines()
+        .skip(1)
+        .map(|line| {
+            line.split(" ")
+                .filter_map(|item| item.parse::<u64>().ok())
+                .collect::<Vec<u64>>()
+        })
+        .map(|mapping| Map::new(mapping))
+        .collect()
+}
+
 fn main() {
-    let data: Vec<_> = include_str!("../../../input/day-05_test.txt")
+    let data: Vec<_> = include_str!("../../../input/day-05.txt")
         .split("\n\n")
         .collect();
 
-    println!("data: {:?}", data);
-
-    let seeds: HashSet<u32> = data[0]
+    let seeds: HashSet<u64> = data[0]
         .split(" ")
         .skip(1)
         .filter_map(|x| x.parse().ok())
         .collect();
 
-    println!("seeds: {:?}", seeds);
+    let mut maps: Vec<Vec<Map>> = vec![parse_maps(data[1])];
+    for i in 2..=7 {
+        maps.push(parse_maps(data[i]));
+    }
 
-    println!("data[1]: {:?}", data[1]);
+    let mut lowest_location: Option<u64> = None;
 
-    let seed_to_soil = data[1].lines().collect::<Vec<&str>>();
+    for seed in seeds {
+        let mut mapped = seed;
 
-    println!("seed_to_soil: {:?}", seed_to_soil);
-
-    let seed_to_soil: Vec<_> = seed_to_soil
-        .iter()
-        .skip(1)
-        .map(|x| {
-            x.split(" ")
-                .filter_map(|y| y.parse::<u32>().ok())
-                .collect::<Vec<u32>>()
-        })
-        .collect();
-
-    let seed_to_soil: Vec<_> = seed_to_soil
-        .iter()
-        .map(|x| Map::new(x.to_vec()))
-        .collect();
-
-    //             .filter_map(|line| line.parse().ok())
-    //            .collect();
-    //   }
-
-    println!("seed_to_soil: {:?}", seed_to_soil);
-
-    /*
-    let seed_to_soil: HashSet<Map> = seed_to_soil
-        .iter()
-        .map(|line| {
-            let mut line = line.split(" ");
-            let destination = line.next().unwrap().parse::<u32>().unwrap();
-            let source = line.next().unwrap().parse::<u32>().unwrap();
-            let range = line.next().unwrap().parse::<u32>().unwrap();
-
-            Map {
-                from: source,
-                to: source + range - 1,
-                delta: destination - source,
+        for map_type in &maps {
+            for map in map_type {
+                if mapped >= map.from && mapped <= map.to {
+                    mapped = (mapped as i64 + map.delta) as u64;
+                    break;
+                }
             }
-        })
-        .collect();
+        }
 
-     */
-    /*
-        .iter()
-        .map(|(destination, source, range)| Map {
-            from: source,
-            to: source + range - 1,
-            delta: destination - source,
-        })
-        .collect();
-
-    println!("seed_to_soil: {:?}", seed_to_soil);
-     */
-    //    println!("seed_to_soil: {:?}", seed_to_soil);
-    /*    .for_each(|line| {
-        let mut line = line.lines();
-        let seed = line.next().unwrap();
-        let seeds: HashSet<_> = seed
-            .split(" ")
-            .skip(1)
-            .filter_map(|x| x.parse::<u32>().ok())
-            .collect();
-
-        println!("seeds: {:?}", seeds);
-    });
-
-
-    let line = data.lines().next().unwrap();
-    let seeds: HashSet<_> = line
-        .split(" ")
-        .skip(1)
-        .filter_map(|x| x.parse::<u32>().ok())
-        .collect();
-
-    println!("seeds: {:?}", seeds);
-
-     */
+        match lowest_location {
+            None => lowest_location = Some(mapped),
+            Some(lowest) => lowest_location = Some(lowest.min(mapped)),
+        }
+    }
+    println!("lowest_location: {:?}", lowest_location.unwrap());
 }

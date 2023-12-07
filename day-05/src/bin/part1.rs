@@ -1,3 +1,4 @@
+use rayon::prelude::*;
 use std::collections::HashSet;
 
 #[derive(Debug)]
@@ -47,7 +48,7 @@ fn main() {
 
     let mut lowest_location: Option<u64> = None;
 
-    for seed in seeds {
+    seeds.par_iter().for_each(|seed| {
         let mut mapped = seed;
 
         for map_type in &maps {
@@ -63,6 +64,6 @@ fn main() {
             None => lowest_location = Some(mapped),
             Some(lowest) => lowest_location = Some(lowest.min(mapped)),
         }
-    }
+    });
     println!("lowest_location: {:?}", lowest_location.unwrap());
 }

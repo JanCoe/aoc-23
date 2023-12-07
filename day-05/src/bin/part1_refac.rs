@@ -1,4 +1,4 @@
-use std::collections::{HashSet, BTreeMap};
+use std::collections::{BTreeMap, HashSet};
 
 #[derive(Debug, Clone)]
 struct Map {
@@ -60,7 +60,7 @@ fn main() {
             }
             println!("btree first: {:?}", btree);
 
-//            let mut previous_delta = btree.get(&previous_key).unwrap().clone();
+            //            let mut previous_delta = btree.get(&previous_key).unwrap().clone();
             let mut previous_delta = 0;
 
             for (key, delta) in btree.iter_mut() {
@@ -69,9 +69,12 @@ fn main() {
                     *delta += map.delta;
                 };
             }
-            println!("btree second: {:?}, previous delta: {:?}", btree, previous_delta);
-            match btree.get_mut(&(&map.to+1)) {
-                None => btree.insert(map.to+1, previous_delta),
+            println!(
+                "btree second: {:?}, previous delta: {:?}",
+                btree, previous_delta
+            );
+            match btree.get_mut(&(&map.to + 1)) {
+                None => btree.insert(map.to + 1, previous_delta),
                 _ => None,
             };
             println!("btree third: {:?} \n", btree);

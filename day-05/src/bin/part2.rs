@@ -76,5 +76,6 @@ fn main() {
             }
         }
     }
+
     println!("lowest_location: {:?}", lowest_location.unwrap());
 }

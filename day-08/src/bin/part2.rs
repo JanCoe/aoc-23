@@ -1,26 +1,18 @@
+use num::integer::lcm;
 use std::collections::{HashMap, HashSet};
-
-const TEST_DATA: &str = "LR
-
-11A = (11B, XXX)
-11B = (XXX, 11Z)
-11Z = (11B, XXX)
-22A = (22B, XXX)
-22B = (22C, 22C)
-22C = (22Z, 22Z)
-22Z = (22B, 22B)
-XXX = (XXX, XXX)";
 
 fn main() {
     let data = include_str!("../../../input/day-08.txt");
-    // let data = TEST_DATA;
     let directions = get_directions(data);
     let nodes = get_nodes(data);
     let get_locations = get_locations(&nodes);
-    let locations_ending_with_a = locations_end_with(&get_locations, "A");
 
-    let steps = follow_directions(locations_ending_with_a, "Z", directions, &nodes);
-    println!("steps: {steps}");
+    let result = locations_end_with(&get_locations, "A")
+        .into_iter()
+        .map(|start| follow_directions(&start, "Z", directions, &nodes))
+        .fold(1, |acc, x| lcm(acc, x));
+
+    println!("result: {:?}", result);
 }
 
 #[derive(Debug)]
@@ -65,16 +57,8 @@ fn locations_end_with(locations: &HashSet<String>, end: &str) -> Vec<String> {
         .collect()
 }
 
-fn check_locations_end_with(locations: &Vec<String>, end: &str) -> bool {
-    locations.len()
-        == locations
-            .iter()
-            .filter(|location| location.ends_with(end))
-            .count()
-}
-
 fn follow_directions(
-    start: Vec<String>,
+    start: &str,
     end: &str,
     directions: &str,
     nodes: &HashMap<String, Node>,
@@ -82,35 +66,21 @@ fn follow_directions(
     let mut current = start;
 
     for (ctr, direction) in directions.chars().cycle().enumerate() {
-        if check_locations_end_with(&current, end) {
+        if current.ends_with(end) {
             return ctr;
         }
-        if ctr % 100000 == 0 {
-            println!("ctr {}: {:?}", ctr, current);
-        }
         match direction {
-            'L' => {
-                current = current
-                    .iter()
-                    .map(|loc| nodes.get(loc).unwrap().left.clone())
-                    .collect()
-            }
-            'R' => {
-                current = current
-                    .iter()
-                    .map(|loc| nodes.get(loc).unwrap().right.clone())
-                    .collect()
-            }
+            'L' => current = &nodes.get(current).unwrap().left,
+            'R' => current = &nodes.get(current).unwrap().right,
             _ => panic!("invalid direction"),
         }
-        // println!("current: {:?}", current);
     }
     panic!("impossible to get here because above loop is infinite");
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{follow_directions, get_directions, get_locations, get_nodes, locations_end_with};
+    use super::{get_directions, get_locations, get_nodes, locations_end_with};
 
     const TEST_DATA: &str = "LR
 
@@ -152,15 +122,5 @@ XXX = (XXX, XXX)";
         let locations_ending_with_z = locations_end_with(&locations, "Z");
         assert_eq!(locations_ending_with_z.len(), 2);
         assert!(locations_ending_with_z.contains(&"11Z".to_string()));
-    }
-
-    #[test]
-    fn test_follow_directions() {
-        let directions = get_directions(TEST_DATA);
-        let nodes = get_nodes(TEST_DATA);
-        let locations = get_locations(&nodes);
-        let locations_ending_with_a = locations_end_with(&locations, "A");
-        let steps = follow_directions(locations_ending_with_a, "Z", directions, &nodes);
-        assert_eq!(6, steps);
     }
 }

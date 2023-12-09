@@ -5,4 +5,4 @@ members = ["day-01", "day-02", "day-03", "day-04", "day-05", "day-06", "day-08"]
 [workspace.dependencies]
 itertools = "0.12.0"
 rayon = "1.8.0"
-nom = "7.1.3"
+num = "0.4.0"

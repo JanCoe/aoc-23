@@ -25,7 +25,7 @@ fn remove_char(s: &str, c: char) -> String {
 }
 
 fn grab_numbers(s: &str) -> usize {
-    let line: String = s.split(':').skip(1).collect();
+    let line = s.split(':').skip(1).collect::<String>();
     remove_char(&line, ' ').parse().unwrap()
 }
 

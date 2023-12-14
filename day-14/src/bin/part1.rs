@@ -7,7 +7,7 @@ impl Data<'_> {
         Data { data }
     }
 
-    fn transpose(&self) -> Vec<String> {
+    fn rotate(&self) -> Vec<String> {
         let num_cols = self.data[0].chars().count();
         let mut vec_of_iter: Vec<_> = Vec::new();
 
@@ -31,14 +31,18 @@ impl Data<'_> {
 }
 
 fn main() {
-    let data = include_str!("../../../input/day-14_test.txt");
+    let data = include_str!("../../../input/day-14.txt");
     let data = Data::new(data);
 
     let num_cols = data.data[0].chars().count();
-    let binding = data.transpose();
+
+    //transpose
+    let binding = data.rotate();
     let transposed: Vec<_> = binding.iter().map(|s| s.as_str()).collect();
 
-    let mut score = 0;
+    //roll
+    let mut merged = String::new();
+    let mut merged_vec: Vec<String> = Vec::new();
     for str_slice in transposed.into_iter() {
         let mut items = vec![];
 
@@ -51,15 +55,26 @@ fn main() {
             items.push(group);
         }
 
-        let mut ctr = num_cols + 1;
-        for column in items.iter() {
-            ctr -= 1;
-            for item in column.iter() {
-                if item == &'O' {
-                    score += ctr;
-                }
-                ctr -= 1;
+        merged = items
+            .clone()
+            .into_iter()
+            .map(|v| v.into_iter().collect::<String>())
+            .collect::<Vec<String>>()
+            .join(&'#'.to_string());
+        println!("{}", merged);
+        merged_vec.push(merged);
+    }
+
+    //score
+    let mut score = 0;
+    for col in merged_vec.into_iter() {
+        let mut ctr = num_cols;
+
+        for item in col.chars() {
+            if item == 'O' {
+                score += ctr;
             }
+            ctr -= 1;
         }
     }
     println!("Score: {}", score);

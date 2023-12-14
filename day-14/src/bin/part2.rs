@@ -20,7 +20,7 @@ fn rotate(data: &Vec<String>) -> Vec<String> {
     columns
 }
 
-fn roll(data: &Vec<&str>) -> Vec<String> {
+fn roll(data: &Vec<&str>, sort: bool) -> Vec<String> {
     let mut merged: String;
     let mut merged_vec: Vec<String> = Vec::new();
 
@@ -31,7 +31,9 @@ fn roll(data: &Vec<&str>) -> Vec<String> {
 
         for group in split {
             let mut group: Vec<_> = group.chars().collect();
-            group.sort();
+            if sort {
+                group.sort();
+            }
             let group: Vec<_> = group.into_iter().rev().collect();
             items.push(group);
         }
@@ -65,7 +67,7 @@ fn score(data: &Vec<String>) -> usize {
 }
 
 fn main() {
-    let data = include_str!("../../../input/day-14.txt");
+    let data = include_str!("../../../input/day-14_test.txt");
     let data = data.lines().map(String::from).collect();
 
     let num_cycles = 1;
@@ -76,7 +78,39 @@ fn main() {
         let data: Vec<_> = binding.iter().map(|s| s.as_str()).collect();
 
         //roll
-        let data = roll(&data);
+        let data = roll(&data, true);
+
+        println!("North: {:?}", data);
+
+        //WEST
+        //transpose
+        let binding = rotate(&data);
+        let data: Vec<_> = binding.iter().map(|s| s.as_str()).collect();
+
+        //roll
+        let data = roll(&data, false);
+
+        println!("West: {:?}", data);
+
+        //SOUTH
+        //transpose
+        let binding = rotate(&data);
+        let data: Vec<_> = binding.iter().map(|s| s.as_str()).collect();
+
+        //roll
+        let data = roll(&data, true);
+
+        println!("South: {:?}", data);
+
+        //EAST
+        //transpose
+        let binding = rotate(&data);
+        let data: Vec<_> = binding.iter().map(|s| s.as_str()).collect();
+
+        //roll
+        let data = roll(&data, false);
+
+        println!("East: {:?}", data);
 
         //score
         if ctr == (num_cycles - 1) {
